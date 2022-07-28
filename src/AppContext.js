@@ -126,13 +126,16 @@ export const AppContextProvider = (props) => {
       console.log(displayValue,  operator, value, nextOperator);
 
 
+			
       if (value == null ) {
         setState({
           ...state,
-          value: inputValue,
-        });
+					value: inputValue,
+					waitingForOperand: true,
+					operator: `${nextOperator}`,
+				});
 			}
-			if (operator) {
+			else if (operator) {
         let currentValue = value ?? 0;
         let newValue = 0;
 
@@ -160,22 +163,11 @@ export const AppContextProvider = (props) => {
         setState({
           ...state,
           value: newValue,
-          displayValue: String(newValue),
+					displayValue: String(newValue),
+					waitingForOperand: true,
+					operator: `${nextOperator}`,
         });
       }
-
-			
-      setState({
-        ...state,
-        waitingForOperand: true,
-        operator: `${nextOperator}`,
-			});
-			
-			value = state.value;
-      displayValue = state.displayValue;
-			operator = state.operator;
-			console.log('displayValue,  operator, value, nextOperator updated');
-      console.log(displayValue,  operator, value, nextOperator);
 
     },
 
