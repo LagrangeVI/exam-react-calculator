@@ -137,7 +137,7 @@ export const AppContextProvider = (props) => {
 			}
 			else if (operator) {
         let currentValue = value ?? 0;
-        let newValue = 0;
+        let newValue;
 
         switch (operator) {
           case "/":
