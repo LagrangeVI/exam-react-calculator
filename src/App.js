@@ -5,13 +5,7 @@ import "./App.css";
 const App = () => {
   const { state, actions } = useContext(AppContext);
 
-  const CalculatorOperations = {
-    "/": (prevValue, nextValue) => prevValue / nextValue,
-    "*": (prevValue, nextValue) => prevValue * nextValue,
-    "+": (prevValue, nextValue) => prevValue + nextValue,
-    "-": (prevValue, nextValue) => prevValue - nextValue,
-    "=": (prevValue, nextValue) => nextValue,
-  };
+  const CalculatorOperations = ["/", "*", "+", "-", "="];
 
   const CalculatorDisplay = ({ value }) => {
     let formattedValue = parseFloat(value ?? 0);
@@ -24,7 +18,6 @@ const App = () => {
   };
   const CalculatorKey = ({ onPress, className, ...props }) => {
     let onClick = () => {
-      console.log(className);
       onPress();
     };
     return (
@@ -39,7 +32,6 @@ const App = () => {
   useEffect(() => {
     const handleKeyDown = (e) => {
       let { key } = e;
-      console.log(key);
 
       if (key === "Enter") key = "=";
 
@@ -65,13 +57,12 @@ const App = () => {
         } else {
           actions.clearAll();
         }
-      }
-      else return
+      } else return;
     };
     window.addEventListener("keyup", handleKeyDown);
     return () => window.removeEventListener("keyup", handleKeyDown);
   });
-  let displayValue = state.displayValue ?? 0
+  let displayValue = state.displayValue ?? 0;
 
   return (
     <div className="calculator">

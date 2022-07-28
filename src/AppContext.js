@@ -118,24 +118,18 @@ export const AppContextProvider = (props) => {
     performOperation: (nextOperator) => {
       let value = state.value;
       let displayValue = state.displayValue;
-			let operator = state.operator;
-			
+      let operator = state.operator;
+
       let inputValue = parseFloat(displayValue);
-			
-			console.log('displayValue,  operator, value, nextOperator');
-      console.log(displayValue,  operator, value, nextOperator);
 
-
-			
-      if (value == null ) {
+      if (value == null) {
         setState({
           ...state,
-					value: inputValue,
-					waitingForOperand: true,
-					operator: `${nextOperator}`,
-				});
-			}
-			else if (operator) {
+          value: inputValue,
+          waitingForOperand: true,
+          operator: `${nextOperator}`,
+        });
+      } else if (operator) {
         let currentValue = value ?? 0;
         let newValue;
 
@@ -144,31 +138,30 @@ export const AppContextProvider = (props) => {
             newValue = currentValue / inputValue;
             break;
           case "*":
-						newValue = currentValue * inputValue;
+            newValue = currentValue * inputValue;
             break;
-						
+
           case "+":
-						newValue = currentValue + inputValue;
+            newValue = currentValue + inputValue;
             break;
-						
+
           case "-":
-						newValue = currentValue - inputValue;
+            newValue = currentValue - inputValue;
             break;
-						
+
           case "=":
-						newValue = inputValue;
+            newValue = inputValue;
             break;
-				}
-				
+        }
+
         setState({
           ...state,
           value: newValue,
-					displayValue: String(newValue),
-					waitingForOperand: true,
-					operator: `${nextOperator}`,
+          displayValue: String(newValue),
+          waitingForOperand: true,
+          operator: `${nextOperator}`,
         });
       }
-
     },
 
     setScale: (scale) => {
