@@ -145,17 +145,12 @@ const AppContextProvider = (props) => {
 const CalculatorDisplay = () => {
   const {state, actions} = useContext(AppContext);
 
-  const language = navigator.language || "en-US";
-
-  let formattedValue = parseFloat(state.value).toLocaleString(language, {
-    useGrouping: true,
-    maximumFractionDigits: 6,
-  });
+  let formattedValue = parseFloat(state.value).toFixed(2);
 
   // Add back missing .0 in e.g. 12.0
-  const match = state.value.match(/\.\d*?(0*)$/);
+  // const match = state.value.match(/\.\d*?(0*)$/);
 
-  if (match) formattedValue += /[1-9]/.test(match[0]) ? match[1] : match[0];
+  // if (match) formattedValue += /[1-9]/.test(match[0]) ? match[1] : match[0];
 
   return (
     <div className="calculator-display">
@@ -166,9 +161,9 @@ const CalculatorDisplay = () => {
 
 const CalculatorKey = ({ onPress, className, ...props }) => {
   return (
-    <PointTarget onPoint={onPress}>
-      <button className={`calculator-key ${className}`} {...props} />
-    </PointTarget>
+
+      <button onClick={()=>onPress()} className={`calculator-key ${className}`} {...props} />
+
   );
 };
 
