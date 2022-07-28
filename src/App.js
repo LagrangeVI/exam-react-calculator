@@ -7,12 +7,12 @@ const App = () => {
 
   const CalculatorOperations = ["/", "*", "+", "-", "="];
 
-  const CalculatorDisplay = ({ value }) => {
-    let formattedValue = parseFloat(value ?? 0);
+  const CalculatorDisplay = ({ value = 0 }) => {
+    let formattedValue = parseFloat(value);
 
     return (
       <div className="calculator-display">
-        {formattedValue && formattedValue}
+        {formattedValue && (formattedValue ?? 0)}
       </div>
     );
   };
