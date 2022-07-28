@@ -1,8 +1,5 @@
 import React, {
   useState,
-  useEffect,
-  useContext,
-  PointTarget,
   createContext,
 } from "react";
 
@@ -14,23 +11,6 @@ let initialState = {
   scale: 1,
 };
 
-const CalculatorOperations = {
-  "/": (prevValue, nextValue) => {
-    return prevValue / nextValue;
-  },
-  "*": (prevValue, nextValue) => {
-    return prevValue * nextValue;
-  },
-  "+": (prevValue, nextValue) => {
-    return prevValue + nextValue;
-  },
-  "-": (prevValue, nextValue) => {
-    return prevValue - nextValue;
-  },
-  "=": (prevValue, nextValue) => {
-    return nextValue;
-  },
-};
 
 export const AppContext = createContext();
 
