@@ -1,4 +1,4 @@
-import {
+import React, {
   useState,
   useEffect,
   useContext,
@@ -8,19 +8,20 @@ import {
 
 import "./App.css";
 
-const initialState = {
-  value: null,
-  displayValue: "0",
-  operator: null,
-  waitingForOperand: false,
-  scale: 1,
-};
+
 
 const AppContext = createContext();
 
 const AppContextProvider = (props) => {
-  const [state, setState] = useState(initialState);
+  const [state, setState] = useState({
+    value: null,
+    displayValue: "0",
+    operator: null,
+    waitingForOperand: false,
+    scale: 1,
+  });
 
+  
   const actions = {
     setValue: async (value) => {
       setState({ ...state, value });
@@ -67,7 +68,7 @@ const AppContextProvider = (props) => {
         displayValue: String(newValue.toFixed(fixedDigits.length + 2)),
       });
     },
-    inputDot: () => {
+    inputDot: async () => {
       if (!/\./.test(state.displayValue)) {
         setState({
           ...state,
@@ -77,7 +78,7 @@ const AppContextProvider = (props) => {
       }
     },
 
-    inputDigit: (digit) => {
+    inputDigit: async (digit) => {
       if (state.waitingForOperand) {
         setState({
           ...state,
@@ -94,7 +95,7 @@ const AppContextProvider = (props) => {
         });
       }
     },
-    performOperation: (nextOperator) => {
+    performOperation: async (nextOperator) => {
       const inputValue = parseFloat(state.displayValue);
 
       if (state.value == null) {
@@ -116,9 +117,15 @@ const AppContextProvider = (props) => {
         });
       }
 
-      state.setState({
+      setState({
         waitingForOperand: true,
         operator: nextOperator,
+      });
+    },
+    setScale: async (scale) => {
+      setState({
+        ...state,
+        scale: scale,
       });
     },
   };
@@ -135,36 +142,8 @@ const AppContextProvider = (props) => {
   );
 };
 
-const AutoScalingText = (props) => {
-  const [state, actions] = useContext(AppContext);
-
-  const node = this.node;
-  const parentNode = node.parentNode;
-
-  const availableWidth = parentNode.offsetWidth;
-  const actualWidth = node.offsetWidth;
-  const actualScale = availableWidth / actualWidth;
-
-  if (state.scale === actualScale) return;
-
-  if (actualScale < 1) {
-    this.setState({ scale: actualScale });
-  } else if (state.scale < 1) {
-    this.setState({ scale: 1 });
-  }
-  return (
-    <div
-      className="auto-scaling-text"
-      style={{ transform: `scale(${state.scale},${state.scale})` }}
-      ref={(node) => (this.node = node)}
-    >
-      {props.children}
-    </div>
-  );
-};
-
 const CalculatorDisplay = () => {
-  const [state, actions] = useContext(AppContext);
+  const {state, actions} = useContext(AppContext);
 
   const language = navigator.language || "en-US";
 
@@ -180,7 +159,7 @@ const CalculatorDisplay = () => {
 
   return (
     <div className="calculator-display">
-      <AutoScalingText>{formattedValue}</AutoScalingText>
+      {formattedValue}
     </div>
   );
 };
@@ -202,7 +181,7 @@ const CalculatorOperations = {
 };
 
 const App = () => {
-  const [state, actions] = useContext(AppContext);
+  const {state, actions} = useContext(AppContext);
 
   const handleKeyDown = (event) => {
     let { key } = event;
@@ -236,139 +215,139 @@ const App = () => {
   };
 
   return (
-    <div className="calculator">
-      <AppContextProvider>
-        <CalculatorDisplay />
-        <div className="calculator-keypad">
-          <div className="input-keys">
-            <div className="function-keys">
-              <CalculatorKey
-                className="key-clear"
-                onPress={() =>
-                  state.clearDisplay
-                    ? actions.clearDisplay()
-                    : actions.clearAll()
-                }
-              >
-                {state.clearText}
-              </CalculatorKey>
-              <CalculatorKey
-                className="key-sign"
-                onPress={() => actions.toggleSign()}
-              >
-                ±
-              </CalculatorKey>
-              <CalculatorKey
-                className="key-percent"
-                onPress={() => actions.inputPercent()}
-              >
-                %
-              </CalculatorKey>
+    <AppContextProvider>
+      <div className="calculator">
+          <CalculatorDisplay />
+          <div className="calculator-keypad">
+            <div className="input-keys">
+              <div className="function-keys">
+                <CalculatorKey
+                  className="key-clear"
+                  onPress={() =>
+                    state.clearDisplay
+                      ? actions.clearDisplay()
+                      : actions.clearAll()
+                  }
+                >
+                  {state.clearText}
+                </CalculatorKey>
+                <CalculatorKey
+                  className="key-sign"
+                  onPress={() => actions.toggleSign()}
+                >
+                  ±
+                </CalculatorKey>
+                <CalculatorKey
+                  className="key-percent"
+                  onPress={() => actions.inputPercent()}
+                >
+                  %
+                </CalculatorKey>
+              </div>
+              <div className="digit-keys">
+                <CalculatorKey
+                  className="key-0"
+                  onPress={() => actions.inputDigit(0)}
+                >
+                  0
+                </CalculatorKey>
+                <CalculatorKey
+                  className="key-dot"
+                  onPress={() => actions.inputDot()}
+                >
+                  ●
+                </CalculatorKey>
+                <CalculatorKey
+                  className="key-1"
+                  onPress={() => actions.inputDigit(1)}
+                >
+                  1
+                </CalculatorKey>
+                <CalculatorKey
+                  className="key-2"
+                  onPress={() => actions.inputDigit(2)}
+                >
+                  2
+                </CalculatorKey>
+                <CalculatorKey
+                  className="key-3"
+                  onPress={() => actions.inputDigit(3)}
+                >
+                  3
+                </CalculatorKey>
+                <CalculatorKey
+                  className="key-4"
+                  onPress={() => actions.inputDigit(4)}
+                >
+                  4
+                </CalculatorKey>
+                <CalculatorKey
+                  className="key-5"
+                  onPress={() => actions.inputDigit(5)}
+                >
+                  5
+                </CalculatorKey>
+                <CalculatorKey
+                  className="key-6"
+                  onPress={() => actions.inputDigit(6)}
+                >
+                  6
+                </CalculatorKey>
+                <CalculatorKey
+                  className="key-7"
+                  onPress={() => actions.inputDigit(7)}
+                >
+                  7
+                </CalculatorKey>
+                <CalculatorKey
+                  className="key-8"
+                  onPress={() => actions.inputDigit(8)}
+                >
+                  8
+                </CalculatorKey>
+                <CalculatorKey
+                  className="key-9"
+                  onPress={() => actions.inputDigit(9)}
+                >
+                  9
+                </CalculatorKey>
+              </div>
             </div>
-            <div className="digit-keys">
+            <div className="operator-keys">
               <CalculatorKey
-                className="key-0"
-                onPress={() => actions.inputDigit(0)}
+                className="key-divide"
+                onPress={() => actions.performOperation("/")}
               >
-                0
+                ÷
               </CalculatorKey>
               <CalculatorKey
-                className="key-dot"
-                onPress={() => actions.inputDot()}
+                className="key-multiply"
+                onPress={() => actions.performOperation("*")}
               >
-                ●
+                ×
               </CalculatorKey>
               <CalculatorKey
-                className="key-1"
-                onPress={() => actions.inputDigit(1)}
+                className="key-subtract"
+                onPress={() => actions.performOperation("-")}
               >
-                1
+                −
               </CalculatorKey>
               <CalculatorKey
-                className="key-2"
-                onPress={() => actions.inputDigit(2)}
+                className="key-add"
+                onPress={() => actions.performOperation("+")}
               >
-                2
+                +
               </CalculatorKey>
               <CalculatorKey
-                className="key-3"
-                onPress={() => actions.inputDigit(3)}
+                className="key-equals"
+                onPress={() => actions.performOperation("=")}
               >
-                3
-              </CalculatorKey>
-              <CalculatorKey
-                className="key-4"
-                onPress={() => actions.inputDigit(4)}
-              >
-                4
-              </CalculatorKey>
-              <CalculatorKey
-                className="key-5"
-                onPress={() => actions.inputDigit(5)}
-              >
-                5
-              </CalculatorKey>
-              <CalculatorKey
-                className="key-6"
-                onPress={() => actions.inputDigit(6)}
-              >
-                6
-              </CalculatorKey>
-              <CalculatorKey
-                className="key-7"
-                onPress={() => actions.inputDigit(7)}
-              >
-                7
-              </CalculatorKey>
-              <CalculatorKey
-                className="key-8"
-                onPress={() => actions.inputDigit(8)}
-              >
-                8
-              </CalculatorKey>
-              <CalculatorKey
-                className="key-9"
-                onPress={() => actions.inputDigit(9)}
-              >
-                9
+                =
               </CalculatorKey>
             </div>
           </div>
-          <div className="operator-keys">
-            <CalculatorKey
-              className="key-divide"
-              onPress={() => actions.performOperation("/")}
-            >
-              ÷
-            </CalculatorKey>
-            <CalculatorKey
-              className="key-multiply"
-              onPress={() => actions.performOperation("*")}
-            >
-              ×
-            </CalculatorKey>
-            <CalculatorKey
-              className="key-subtract"
-              onPress={() => actions.performOperation("-")}
-            >
-              −
-            </CalculatorKey>
-            <CalculatorKey
-              className="key-add"
-              onPress={() => actions.performOperation("+")}
-            >
-              +
-            </CalculatorKey>
-            <CalculatorKey
-              className="key-equals"
-              onPress={() => actions.performOperation("=")}
-            >
-              =
-            </CalculatorKey>
-          </div>
-        </div>
-      </AppContextProvider>
-    </div>
+      </div>
+    </AppContextProvider>
   );
 };
 
