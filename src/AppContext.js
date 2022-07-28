@@ -9,7 +9,7 @@ import React, {
 let initialState = {
   value: null,
   displayValue: "0",
-  operator: null,
+  operator: "",
   waitingForOperand: false,
   scale: 1,
 };
@@ -41,7 +41,7 @@ export const AppContextProvider = (props) => {
     clearAll: () => {
       setState({
         ...state,
-        value: 0,
+        value: null,
         displayValue: "0",
         operator: null,
         waitingForOperand: false,
@@ -63,7 +63,7 @@ export const AppContextProvider = (props) => {
     toggleSign: () => {
       let displayValue = state.displayValue;
 
-      const newValue = parseFloat(displayValue) * -1;
+      let newValue = parseFloat(displayValue) * -1;
       setState({
         ...state,
         displayValue: String(newValue),
@@ -76,8 +76,8 @@ export const AppContextProvider = (props) => {
 
       if (currentValue === 0) return;
 
-      const fixedDigits = displayValue.replace(/^-?\d*\.?/, "");
-      const newValue = parseFloat(displayValue) / 100;
+      let fixedDigits = displayValue.replace(/^-?\d*\.?/, "");
+      let newValue = parseFloat(displayValue) / 100;
 
       setState({
         ...state,
@@ -116,29 +116,47 @@ export const AppContextProvider = (props) => {
     },
 
     performOperation: (nextOperator) => {
-      let displayValue = state.displayValue;
       let value = state.value;
-      let operator = state.operator;
+      let displayValue = state.displayValue;
+			let operator = state.operator;
+			
+      let inputValue = parseFloat(displayValue);
+			
+			console.log('displayValue,  operator, value, nextOperator');
+      console.log(displayValue,  operator, value, nextOperator);
 
-      console.log("displayValue, value, nextOperator");
-      console.log(displayValue, value, nextOperator);
 
-      const inputValue = parseFloat(displayValue);
-
-      if (value == null) {
+      if (value == null ) {
         setState({
           ...state,
           value: inputValue,
         });
-      } else if (operator) {
-        const currentValue = value || 0;
-        const newValue = CalculatorOperations[operator](
-          currentValue,
-          inputValue
-        );
-        console.log("currentValue, operator, inputValue, newValue");
-        console.log(currentValue, operator, inputValue, newValue);
+			}
+			if (operator) {
+        let currentValue = value ?? 0;
+        let newValue = 0;
 
+        switch (operator) {
+          case "/":
+            newValue = currentValue / inputValue;
+            break;
+          case "*":
+						newValue = currentValue * inputValue;
+            break;
+						
+          case "+":
+						newValue = currentValue + inputValue;
+            break;
+						
+          case "-":
+						newValue = currentValue - inputValue;
+            break;
+						
+          case "=":
+						newValue = inputValue;
+            break;
+				}
+				
         setState({
           ...state,
           value: newValue,
@@ -146,11 +164,19 @@ export const AppContextProvider = (props) => {
         });
       }
 
+			
       setState({
         ...state,
         waitingForOperand: true,
-        operator: nextOperator,
-      });
+        operator: `${nextOperator}`,
+			});
+			
+			value = state.value;
+      displayValue = state.displayValue;
+			operator = state.operator;
+			console.log('displayValue,  operator, value, nextOperator updated');
+      console.log(displayValue,  operator, value, nextOperator);
+
     },
 
     setScale: (scale) => {

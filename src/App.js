@@ -13,8 +13,8 @@ const App = () => {
     "=": (prevValue, nextValue) => nextValue,
   };
 
-  const CalculatorDisplay = ({ value = "" }) => {
-    let formattedValue = parseFloat(value);
+  const CalculatorDisplay = ({ value }) => {
+    let formattedValue = parseFloat(value ?? 0);
 
     return (
       <div className="calculator-display">
@@ -66,6 +66,7 @@ const App = () => {
           actions.clearAll();
         }
       }
+      else return
     };
     window.addEventListener("keyup", handleKeyDown);
     return () => window.removeEventListener("keyup", handleKeyDown);
